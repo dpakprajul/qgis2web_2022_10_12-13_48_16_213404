@@ -396,6 +396,29 @@
             propertyName: 'mask_id'}));
         document.getElementsByClassName('search-button')[0].className +=
          ' fa fa-binoculars';
+        document.getElementsByClassName('search-button')[0].title +=
+            'Search for a mask';
+        var baseMaps = {};
+        L.control.layers(baseMaps,{'<img src="legend/hello_0_0.png" /> Toggle Orientation Layer': layer_hello_0,},{collapsed:false}).addTo(map);
+        setBounds();
+        map.addControl(new L.Control.Fullscreen());
+        document.getElementsByClassName('leaflet-control-fullscreen-button')[0]
+        .className += ' fa fa-arrows-alt';
+        document.getElementsByClassName('leaflet-control-fullscreen-button')[0]
+        .title += 'Toggle fullscreen';
+        var hash = new L.Hash(map);
+        map.on('overlayadd', function(e) {
+            if (e.layer === layer_hello_0) {
+                hash.on('hashchange', function(e) {
+                    if (map.hasLayer(layer_hello_0)) {
+                        map.removeLayer(layer_hello_0);
+                        map.addLayer(layer_hello_0);
+                    }
+                });
+            }
+        });
+
+
         </script>
     </body>
     <!-- legend to add different 16 colors to the map -->
