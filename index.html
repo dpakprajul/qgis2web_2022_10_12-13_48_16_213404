@@ -6,6 +6,12 @@
         <meta name="viewport" content="initial-scale=1,user-scalable=no,maximum-scale=1,width=device-width">
         <meta name="mobile-web-app-capable" content="yes">
         <meta name="apple-mobile-web-app-capable" content="yes">
+        <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.2/dist/leaflet.css"
+        integrity="sha256-sA+zWATbFveLLNqWO2gtiw3HL/lh1giY/Inf1BJ0z14="
+        crossorigin=""/>
+         <script src="https://unpkg.com/leaflet@1.9.2/dist/leaflet.js"
+     integrity="sha256-o9N1jGDZrf5tS+Ft4gbIK7mYMipq9lqpVJ91xHSyKhg="
+     crossorigin=""></script>
         <link rel="stylesheet" href="css/leaflet.css">
         <link rel="stylesheet" href="css/qgis2web.css"><link rel="stylesheet" href="css/fontawesome-all.min.css">
         <link rel="stylesheet" href="css/leaflet-search.css">
@@ -20,8 +26,11 @@
         <title></title>
     </head>
     <body>
+        <div id="heading"><h1>Roof Orientation Map</h1></div>
         <div id="map">
+            <div id="legend"></div>
         </div>
+        
         <script src="js/qgis2web_expressions.js"></script>
         <script src="js/leaflet.js"></script>
         <script src="js/leaflet.rotatedMarker.js"></script>
@@ -54,6 +63,10 @@
         var map = L.map('map', {
             zoomControl:true, maxZoom:28, minZoom:1
         }).fitBounds([[48.39931780591756,11.993183274740664],[48.399997351707,11.994297573167733]]);
+        var a = L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    maxZoom: 28,
+    attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+}).addTo(map);
         var hash = new L.Hash(map);
         map.attributionControl.setPrefix('<a href="https://github.com/tomchadwin/qgis2web" target="_blank">qgis2web</a> &middot; <a href="https://leafletjs.com" title="A JS library for interactive maps">Leaflet</a> &middot; <a href="https://qgis.org">QGIS</a>');
         var autolinker = new Autolinker({truncate: {length: 30, location: 'smart'}});
@@ -83,17 +96,10 @@
             });
             var popupContent = '<table>\
                     <tr>\
-                        <td colspan="2">' + (feature.properties['mask_id'] !== null ? autolinker.link(feature.properties['mask_id'].toLocaleString()) : '') + '</td>\
+                        <td colspan="2">' + 'Image ID: '+(feature.properties['mask_id'] !== null ? autolinker.link(feature.properties['mask_id'].toLocaleString()) : '') + '</td>\
                     </tr>\
                     <tr>\
-                        <td colspan="2">' + (feature.properties['label_type'] !== null ? autolinker.link(feature.properties['label_type'].toLocaleString()) : '') + '</td>\
-                    </tr>\
-                    <tr>\
-                        <th scope="row">Shape_Leng</th>\
-                        <td>' + (feature.properties['Shape_Leng'] !== null ? autolinker.link(feature.properties['Shape_Leng'].toLocaleString()) : '') + '</td>\
-                    </tr>\
-                    <tr>\
-                        <td colspan="2">' + (feature.properties['Shape_Area'] !== null ? autolinker.link(feature.properties['Shape_Area'].toLocaleString()) : '') + '</td>\
+                        <td colspan="2">' + 'Orientation: ' +(feature.properties['label_type'] !== null ? autolinker.link(feature.properties['label_type'].toLocaleString()) : '') + '</td>\
                     </tr>\
                 </table>';
             layer.bindPopup(popupContent, {maxHeight: 400});
@@ -392,4 +398,99 @@
          ' fa fa-binoculars';
         </script>
     </body>
+    <!-- legend to add different 16 colors to the map -->
+    <div id="legend">
+        <div class="legend-title">Wind Direction</div>
+        <div class="legend-scale">
+          <ul class="legend-labels">
+     <!-- draw legend of 16 different Orientation -->
+     <li><span style="background:rgba(215,25,28,1.0)"></span>E</li>
+     <li><span style="background:rgba(225,62,45,1.0)"></span>ENE</li>
+     <li><span style="background:rgba(234,99,62,1.0)"></span>ESE</li>
+            <li><span style="background:rgba(244,137,80,1.0)"></span>N</li>
+            <li><span style="background: rgba(253,174,97,1.0)"></span>NE</li>
+            <li><span style="background:rgba(254,195,120,1.0)"></span>NNE</li>
+            <li><span style="background:rgba(254,215,144,1.0)"></span>NNW</li>
+            <li><span style="background:rgba(255,235,168,1.0)"></span>NW</li>
+            <li><span style="background:rgba(253,253,28,1.0)"></span>S</li>
+            <li><span style="background:rgba(234,247,184,1.0)"></span>SE</li>
+            <li><span style="background:rgba(213,238,178,1.0)"></span>SSE</li>
+            
+            <li><span style="background:rgba(192,230,171,1.0)"></span>SSW</li>
+            <li><span style="background:rgba(171,221,164,1.0)"></span>SW</li>
+            <li><span style="background:rgba(139,199,170,1.0)"></span>W</li>
+       
+            <li><span style="background: rgba(107,176,175,1.0)"></span>WNW</li>
+            <li><span style="background: rgba(75,154,181,1.0)"></span>WSW</li>
+       
+            
+           
+            
+         
+          </ul>
+        </div>
+      </div>
+      <!-- create css for legend-scale and legend-labels on the right side of map -->
+
+    <style>
+    #legend {
+        background: #fff;
+        padding: 10px;
+        font: 12px Arial, Helvetica, sans-serif;
+        line-height: 18px;
+        color: #555;
+        border-radius: 5px;
+        width: 140px;
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        z-index: 1000;
+        }
+        #legend h4 {
+        margin: 0 0 10px;
+        text-align: center;
+        }
+        #legend .legend-scale ul {
+        margin: 0;
+        margin-bottom: 5px;
+        padding: 0;
+        float: left;
+        list-style: none;
+        }
+        #legend .legend-scale ul li {
+        font-size: 80%;
+        list-style: none;
+        margin-left: 0;
+        line-height: 18px;
+        margin-bottom: 2px;
+        }
+        #legend ul.legend-labels li span {
+        display: block;
+        float: left;
+        height: 16px;
+        width: 30px;
+        margin-right: 5px;
+        margin-left: 0;
+        border: 1px solid #999;
+        }
+        #legend .legend-source {
+        font-size: 80%;
+        color: #777;
+        clear: both;
+        }
+        #legend a {
+        color: #777;
+        }
+        /* heading at top center and color it to blue */
+        #heading {
+        text-align: center;
+        margin-bottom: 5px;
+        font-weight: bold;
+        font-size: 90%;
+        color: #555;
+        }
+
+    </style>
+
+
 </html>
